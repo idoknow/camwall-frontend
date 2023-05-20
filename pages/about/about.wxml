@@ -1,0 +1,9 @@
+<!--pages/about/about.wxml-->
+<view>
+  <image src="../../res/camwall_logo.jpg" style="position: absolute;width: 200rpx;height: 200rpx;border-radius: 50%;border: 4rpx solid white;box-shadow: 0 0 10rpx rgba(128, 128, 128, 0.637);top:20rpx;left:20rpx;"/>
+</view>
+
+<text style="position: absolute;font-size: 45rpx;width: 400rpx;top: 50rpx;color: rgb(0, 111, 175);left: 250rpx;">Camwall</text>
+<text style="position: absolute;font-size: 25rpx;width: 400rpx;top: 100rpx;color: rgb(0, 57, 90);left: 250rpx;">校园墙自动化管理系统</text>
+<text style="position: absolute;font-size: 25rpx;width: 400rpx;top: 150rpx;color: rgb(0, 69, 90);left: 250rpx;">开源在:RockChinQ/OpenCamwall</text>
+<text style="position: absolute;font-size: 25rpx;width: 400rpx;top: 180rpx;color: rgb(0, 69, 90);left: 250rpx;">技术交流群:226427026</text>

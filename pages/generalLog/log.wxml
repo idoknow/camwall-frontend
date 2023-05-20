@@ -1,0 +1,27 @@
+
+<view style="position: absolute;left: 45rpx;top: 25rpx;font-size: 30rpx;padding-top: 8rpx;">翻页:</view>
+<scroll-view wx:if="{{logs.page_list.length>0}}" id="pages" scroll-x="true" style="position: absolute;width: 600rpx;height: 70rpx;left: 125rpx;top: 20rpx;">
+  <view id="{{item}}" bindtap="switchPage" wx:for="{{logs.page_list}}" style="position: absolute;left: {{index*70}}rpx;background-color: {{(logs.page==item)?'#CCBBBB':'#FFFFFF'}};width: 60rpx;border-radius:30rpx;height: 55rpx;text-align:center;font-size: 35rpx;padding-top: 8rpx;color: {{(logs.page!=item)?'#CCBBBB':'#FFFFFF'}};">
+    {{item}}
+  </view>
+</scroll-view>
+
+<scroll-view wx:if="{{logs.logs.length>0}}" scroll-y="true" style="position: absolute;width: 750rpx;left: 0rpx;top: 100rpx;height: {{windowHeight-80}}px;">
+  <view wx:for="{{logs.logs}}" style="position: absolute;left: 20rpx;width: 700rpx;top: {{index*115}}rpx;height: 100rpx;border-radius: 13rpx;background: #ededed;box-shadow:  5rpx 5rpx 10rpx #cecece,-5rpx -5rpx 10rpx #ffffff;line-height: 25rpx;">
+    <!--operation-->
+    <view style="position: absolute;left: 0rpx;top: 0rpx;background-color: rgb(148, 148, 148);width: 200rpx;height: 35rpx;border-radius: 13rpx 0rpx 0rpx 0rpx;">
+      <text style="position: absolute;left: 0rpx;top: 4rpx;font-size: 27rpx;color: white;width: 200rpx;text-align: center;">{{item.operation}}</text>
+    </view>
+    <!--time-->
+    <view style="position: absolute;left: 210rpx;top: 0rpx;background-color: #6d5e6e;width:200rpx;height: 35rpx;">
+      <text style="position: absolute;left: 0rpx;top: 4rpx;font-size: 27rpx;color: white;width: 200rpx;text-align: center;">{{item.time}}</text>
+    </view>
+    <!--account-->
+    <view style="position: absolute;left: 420rpx;top: 0rpx;background-color: #5a5777;width: 270rpx;height: 35rpx;">
+      <text style="position: absolute;left: 0rpx;top: 4rpx;font-size: 18rpx;color: white;width: 270rpx;text-align: center;">{{item.account}}</text>
+    </view>
+    <!--content-->
+    <text style="position: absolute;left: 10rpx;top: 40rpx;font-size: 24rpx;color: #555555;font-weight: 700;">{{item.content}}</text>
+  </view>
+</scroll-view>
+<view wx:if="{{loading}}" style="position: absolute;width: 650rpx;left: 50rpx;top: 90rpx;background-color: #b6a46b;color: white;padding-left: 10rpx;height: 45rpx;font-size: 30rpx;padding-top: 8rpx;">{{loadingTips}}</view>

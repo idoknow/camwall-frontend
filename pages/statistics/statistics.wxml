@@ -1,0 +1,98 @@
+<!--pages/statistics/statistics.wxml-->
+<view id="navigator" style="display: flex;position: absolute;width: 700rpx;left: 25rpx;top: 50rpx;">
+  <view id="content_list" class="entry" bindtap="switchChart" style="background-color: {{currentChart=='content_list'?'#ddffdd':'#ffffff'}};margin-right: 10rpx;">内容状态</view>
+  <view id="visitor_heat" class="entry" bindtap="switchChart" style="background-color: {{currentChart=='visitor_heat'?'#ddFFdd':'#ffffff'}};margin-right: 10rpx;">点赞热力</view>
+  <view id="history_heat" class="entry" bindtap="switchChart" style="background-color: {{currentChart=='history_heat'?'#ddffdd':'#ffffff'}};margin-right: 10rpx;">历史访客</view>
+</view>
+
+<scroll-view style="position: absolute;display: flex;left: 0rpx;width: 750rpx;height: {{windowHeightRpx-130}}rpx;top: 120rpx;">
+
+  <!--空间热力-->
+  <view class="chart_container" wx:if="{{currentChart=='visitor_heat'}}" style="height: 900rpx;">
+    <ec-canvas id="visitor_heat_chart_dom" canvas-id="visitor_heat_chart" ec="{{ec_visitor_heat}}"></ec-canvas>
+    <text style="position: absolute;font-size: 25rpx;left: 20rpx;top: 10rpx;color: rgb(101, 155, 0);font-weight: 800;">*数据更新时间:{{data_update_time}}</text>
+  </view>
+  <!--历史热力-->
+  <view class="chart_container" wx:if="{{currentChart=='history_heat'}}" style="height: 1000rpx;">
+    <view style="position:relative;left: 10rpx;width: 680rpx;top: 50rpx;height: 430rpx;">
+      <ec-canvas id="history_heat_rate_chart_dom" canvas-id="history_heat_rate_chart" ec="{{ec_history_heat_rate}}"></ec-canvas>
+    </view>
+
+    <view style="position:relative;left: 10rpx;width: 680rpx;top: 50rpx;height: 530rpx;">
+      <ec-canvas id="history_heat_chart_dom" canvas-id="history_heat_chart" ec="{{ec_history_heat}}"></ec-canvas>
+    </view>
+    <text style="position: absolute;font-size: 25rpx;left: 20rpx;top: 10rpx;color: rgb(101, 155, 0);font-weight: 800;">*数据更新时间:{{data_update_time}}</text>
+  </view>
+  <!--投稿状态-->
+  <view wx:if="{{currentChart=='content_list'}}" style="height: 950rpx;border-radius: 14px;background: #f8f8f8;">
+    <!--页码-->
+    <view style="top: 100rpx;left:35rpx;position: absolute;width: 130rpx;height: 55rpx;font-size: 28rpx;font-weight: 600;color: rgb(101, 155, 0);">翻页</view>
+    <scroll-view scroll-x="true" style="top: 95rpx;left:105rpx;position: absolute;width: 620rpx;height: 65rpx;z-index:10000;">
+      <view id="{{item}}" wx:for="{{content_page_list}}" style="position: absolute;z-index:10000;background-color: {{content_list.page==item?'rgb(101, 155, 0)':'#ffffff'}};box-shadow: 3rpx 3rpx 6rpx #acacac;border-radius: 40rpx;left: {{index*60}}rpx;top: 0rpx;width: 50rpx;height: 47rpx;color:  {{content_list.page!=item?'rgb(101, 155, 0)':'#ffffff'}};text-align: center;font-size: 30rpx;font-weight: 400;padding-top: 5rpx;" bindtap="switchContentListPage">
+        {{item}}
+      </view>
+    </scroll-view>
+    <!--表头-->
+    <view style="position: absolute;top: 165rpx;left: 25rpx;width: 700rpx;height: 50rpx;">
+      <view style="background-color: #ffffff;position: absolute;left: 0rpx;top: 0rpx;width: 100rpx;height: 38rpx;z-index: 10;box-shadow: 3rpx 3rpx 8rpx #dddddd;border-radius: 15rpx;color: rgb(101, 155, 0);text-align: center;font-weight: 600;font-size: 28rpx;">
+        编号
+      </view>
+      <view style="background-color: #ffffff;position: absolute;left: 150rpx;top: 0rpx;width: 400rpx;height: 38rpx;z-index: 10;box-shadow: 3rpx 3rpx 8rpx #dddddd;border-radius: 15rpx;color: rgb(101, 155, 0);text-align: center;font-weight: 600;font-size: 26rpx;">
+        时段内点赞(10分|1时|6时|24时)
+      </view>
+      <view style="background-color: #ffffff;position: absolute;left: 580rpx;top: 0rpx;width: 100rpx;height: 38rpx;z-index: 10;box-shadow: 3rpx 3rpx 8rpx #dddddd;border-radius: 15rpx;color: rgb(101, 155, 0);text-align: center;font-weight: 600;font-size: 28rpx;">
+        状态
+      </view>
+    </view>
+    <!--列表-->
+    <scroll-view scroll-y="true" style="position: absolute;left: 0rpx;top: 215rpx;width: 750rpx;height: {{windowHeightRpx-325}}rpx;">
+      <view wx:if="{{content_list.capacity!=0}}">
+        <view wx:for="{{content_list.contents}}" style="position:absolute;left:25rpx;top: {{index*90}}rpx;width: 700rpx;height: 70rpx;border-radius: 14rpx;background: #ffffff;box-shadow:  7rpx 7rpx 14rpx #cecece;">
+          <!--pid-->
+          <view style="position: absolute;left: 10rpx;top: 10rpx;color: rgb(101, 155, 0);font-weight: 800;font-size: 28rpx;">
+            {{item.pid==-1?"人工":("#"+item.pid)}}
+          </view>
+          <!--时间-->
+          <view style="position: absolute;left: 10rpx;top: 40rpx;color: rgb(157, 180, 115);font-weight: 600;font-size: 20rpx;">
+            {{item.time}}
+          </view>
+          <!--我的-->
+          <view wx:if="{{item.openid==openid}}" style="left: 90rpx;top: 10rpx;position: absolute;border:rgb(0, 146, 214) 3rpx solid;width: 50rpx;height: 27rpx;font-size: 20rpx;color: rgb(0, 124, 207);text-align: center;padding-top: -6rpx;font-weight: 600;box-shadow: 2rpx 2rpx 4rpx #dddddd;">
+            我的
+          </view>
+          <!--没有记录的横线-->
+          <view wx:if="{{item.status!='已发表'&&item.pid!=-1}}" style="position: absolute;width: 100rpx;height: 16rpx;font-weight: 1000;color: rgb(101, 155, 0);left: 300rpx;top: 12rpx;font-size: 30rpx;">
+            \
+          </view>
+          <!--时间轴-->
+          <view wx:if="{{item.status=='已发表'||item.pid==-1}}" style="position: absolute;width: {{320*(item.timeline.max/timeline_max_length)}}rpx;height: 30rpx;left: 180rpx;top: 12rpx;border: 4rpx solid rgb(101, 155, 0);background-color: rgb(183, 248, 62);box-shadow: 3rpx 3rpx 7rpx #cecece;">
+            <text style="font-size: 25rpx;color: rgb(104, 104, 104);position: absolute;width:100rpx;height: 20rpx;left: {{320*(item.timeline.max/timeline_max_length)+10}}rpx;top:-35rpx;z-index:10;">
+              {{item.timeline.max}}
+            </text>
+            <view style="position: absolute;width: {{320*(item.timeline.ten_minutes/timeline_max_length)}}rpx;height: 30rpx;left: 0rpx;top:0rpx;border: 0rpx solid rgb(101, 155, 0);background-color: rgb(255, 51, 0);z-index: 6;"></view>
+            <text style="font-size: 22rpx;color: rgb(176, 185, 159);position: absolute;width: {{320*(item.timeline.ten_minutes/timeline_max_length)}}rpx;height: 30rpx;left: 0rpx;top:30rpx;text-align: end;">{{item.timeline.ten_minutes}}
+            </text>
+            <view style="position: absolute;width: {{320*(item.timeline.one_hour/timeline_max_length)}}rpx;height: 30rpx;left: 0rpx;top:0rpx;border: 0rpx solid rgb(101, 155, 0);background-color: rgb(228, 205, 0);z-index: 5;"></view>
+            <text style="font-size: 22rpx;color: rgb(175, 185, 157);position: absolute;width: {{320*(item.timeline.one_hour/timeline_max_length)}}rpx;height: 30rpx;left: 0rpx;top:30rpx;text-align: end;">{{item.timeline.one_hour}}
+            </text>
+            <view style="position: absolute;width: {{320*(item.timeline.six_hours/timeline_max_length)}}rpx;height: 30rpx;left: 0rpx;top:0rpx;border: 0rpx solid rgb(101, 155, 0);background-color: rgb(0, 144, 228);z-index: 4;"></view>
+            <text style="font-size: 22rpx;color: rgb(177, 184, 165);position: absolute;width: {{320*(item.timeline.six_hours/timeline_max_length)}}rpx;height: 30rpx;left: 0rpx;top:30rpx;text-align: end;">{{item.timeline.six_hours}}
+            </text>
+          </view>
+          <!--状态-->
+          <view style="position: absolute;right: 20rpx;top: 15rpx;box-shadow: 4rpx 4rpx 10rpx #d8d8d8;width: 100rpx;height: 40rpx;border-radius: 15rpx;background-color: {{status_color[item.status]}};font-size: 26rpx;color: white;font-weight: 600;text-align: center;padding-top: 2rpx;">{{item.status}}</view>
+        </view>
+      </view>
+        <view style="height: 30rpx;position: absolute;left: 0rpx;width: 10rpx;background-color: rgb(240, 240, 240);top: {{content_list.contents.length*90}}rpx;">
+        </view>
+    </scroll-view>
+    <ec-canvas id="content_list_chart_dom" canvas-id="content_list_chart" ec="{{ec_content_list}}"></ec-canvas>
+    <!-- <text style="position: absolute;font-size: 25rpx;left: 20rpx;top: 10rpx;color: rgb(101, 155, 0);font-weight: 800;">*数据更新时间:{{data_update_time}}</text> -->
+  </view>
+
+  <view class="tips">
+    <text style="font-size: 24rpx;width: 680rpx;left: 10rpx;position: absolute;top: -22rpx;color: rgb(92, 141, 0);font-weight: 800;">
+      {{tips}}
+    </text>
+  </view>
+</scroll-view>

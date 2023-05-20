@@ -1,0 +1,32 @@
+<!--pages/account/account.wxml-->
+<view>
+  <view style="position: absolute;left: 30rpx;font-size: 30rpx;top: 30rpx;color: #0099DD;font-weight: 600;">
+    注册时间:
+    <view style="font-weight: 400;position: absolute;left: 40rpx;width: 500rpx;top: 60rpx;">{{register_time}}</view>
+  </view>
+  <view style="position: absolute;left: 30rpx;font-size: 30rpx;top: 150rpx;color: #0099DD;font-weight: 600;">
+    用户UID:
+    <view style="font-size: 35rpx;position: absolute;left: 40rpx;width: 500rpx;top: 60rpx;font-weight: 700;color: #00608a;">{{user_id}}</view>
+  </view>
+  <view style="position: absolute;left: 30rpx;font-size: 30rpx;top: 270rpx;color: #0099DD;font-weight: 600;">
+    账户密码:{{has_password?" 已设置":""}}
+    <view style="position: absolute;left: 40rpx;width: 190rpx;background-color: #0099DD;color: white;font-size: 30rpx;height: 47rpx;text-align: center;border-radius: 20rpx;top: 60rpx;padding-top: 5rpx;" bindtap="showPassword">{{has_password?"修改":"设置"}}密码</view>
+  </view>
+  <view wx:if="{{!has_password}}" style="position: absolute;left: 160rpx;top: 273rpx;color: rgb(5, 163, 0);font-size: 25rpx;font-weight: 700;">
+    ‼设置密码以便登录我们提供的其他服务
+  </view>
+</view>
+
+<view wx:if="{{showPassword}}" id="pwd" style="position: absolute;left: 0rpx;top: 0rpx;width: 100%;height: 100%;background-color: #44444488;">
+  <view id="panel" style="position: absolute;width: 500rpx;height: 180rpx;left: 125rpx;top: 20%;border-radius: 15px;background: #e6e6e6;box-shadow:  14rpx 14rpx 28rpx #858585;">
+    <view style="position:absolute;left: 0rpx;top: 0rpx;width: 420rpx;height: 45rpx;color: rgb(0, 179, 9);font-weight: 800;padding-left: 20rpx;padding-top: 10rpx;">
+      设置新密码
+    </view>
+    <input placeholder="输入密码..." style="position: absolute;width: 450rpx;left: 25rpx;top: 60rpx;height:60rpx;font-size: 28rpx;" v-model="{{pwd}}" 	adjust-position="true" 	bindinput='passwordInput'>
+    </input>
+    <view id="submit" style="position: absolute;width: 100rpx;height: 45rpx;background-color: #06b100;color: white;right: 15rpx;bottom: 15rpx;border-radius: 15rpx;" bindtap="submitPassword">
+      <text style="position: absolute;width: 100rpx;height: 45rpx;color: white;text-align: center;left: 0rpx;">修改</text>
+    </view>
+  </view>
+  <image src="../../res/close-circle-fill.png" style="position: absolute;left:600rpx;width: 55rpx;height: 55rpx;top: 18%;background-color: white;border-radius: 50rpx;" bindtap="closePassword"></image>
+</view>

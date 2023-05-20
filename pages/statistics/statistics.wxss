@@ -1,0 +1,41 @@
+/* pages/statistics/statistics.wxss */
+
+page {
+  background-color: #f4f4f4;
+}
+
+.entry{
+  background: white;
+  border-radius: 10rpx;
+  width: 170rpx;
+  height: 50rpx;
+  color: #88AA44;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  padding-top: 4rpx;
+  box-shadow: 2rpx 2rpx 4rpx #bbbbbb;
+}
+
+.chart_container{
+  display: inline;
+  background-color: #ffffff;
+  width: 700rpx;
+  position: absolute;
+  height: 500rpx;
+  left: 25rpx;
+  top: 100rpx;
+  box-shadow: 4rpx 4rpx 8rpx #d3d3d3;
+  border-radius: 15rpx;
+}
+.tips{
+  z-index: 10000;
+  background-color: white;
+  width: 700rpx;
+  position: absolute;
+  height: 80rpx;
+  left: 25rpx;
+  top: 0rpx;
+  box-shadow: 4rpx 4rpx 8rpx #d3d3d3;
+  border-radius: 15rpx;
+}

@@ -1,0 +1,244 @@
+<!--pages/index/index.wxml-->
+
+<view wx:if="{{!ready}}" style="position:absolute;left:15rpx;font-size: 30rpx;background-color: #eeaa44;color: ivory;width: 700rpx;padding-left: 15rpx;height: 45rpx;padding-top: 5rpx;top: 10rpx;">{{loadingTips}}</view>
+<!-- <view wx:if="{{user.accounts.length!=0}}" style="z-index:99999;position:absolute;left:15rpx;font-size: 30rpx;background-color: #EE4444;color: ivory;width: 700rpx;padding-left: 15rpx;height: 45rpx;padding-top: 5rpx;top: 10rpx;">*请先添加账户！</view> -->
+
+<view wx:if="{{ready&&banner!=''}}" style="z-index:100;position:absolute;left:0rpx;font-size: 25rpx;background-color: #ffbb00;color: ivory;width: 750rpx;padding-left: 15rpx;height: 35rpx;padding-top: 0rpx;top: 0rpx;">📢{{banner}}</view>
+<view id="postPanel" wx:if="{{showPost}}">
+  <!--post component-->
+  <view wx:if="{{pendingPost==null}}">
+
+    <view style="z-index:99999;position: absolute;top: {{user.accounts.length==0?860:-200}}rpx;left: 30rpx;width: 750rpx;">
+      <view style="z-index:99999;position: absolute;width: 250rpx;height: 70rpx;border-radius: 20rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);background-color: rgba(255, 255, 255, 0.562);">
+      </view>
+      <view style="position: absolute;left: 5rpx;font-size: 23rpx;top: 80rpx;color: red;">
+        ⚠前往"我的"页"添加绑定"后才能使用投稿功能；如已添加,请前往刷新。
+      </view>
+    </view>
+    <scroll-view scroll-y="true" style="position: absolute;left: 0rpx;top: 0rpx;height: {{windowHeightRpx-115}}rpx;">
+      <textarea style="position: absolute;width: 700rpx;left: 25rpx;top: 40rpx;height: 260rpx;" placeholder='说点什么...' maxlength="40960" bindinput="textAreaInput" value="{{textareavalue}}"></textarea>
+
+
+      <scroll-view id="imgs" scroll-x="true" style="display:flex;position: absolute;top: 310rpx;left: 0rpx;height: 160rpx;">
+        <view wx:if="{{selectedMedia.length>0}}" wx:for="{{selectedMedia}}" style="position: absolute;left: {{index*170+20}}rpx;width: 160rpx;height: 160rpx;top: 0rpx;">
+          <image src="{{item}}" style="position: absolute;left:0rpx;width: 160rpx;height: 150rpx;top: 10rpx;"></image>
+          <image src="../../res/close-circle-fill.png" style="position: absolute;right: -10rpx;top:0rpx;width: 45rpx;height: 45rpx;" id="{{item}}" bindtap="deleteImg"></image>
+        </view>
+        <image src="../../res/add-box-line.png" style="position: absolute;left: {{selectedMedia.length*170+20}}rpx;top:0rpx;width: 160rpx;height: 160rpx;" bindtap="addMedia"></image>
+        <!-- <image src="../../res/image-add-line.png" style="position: absolute;left: 190rpx;top:330rpx;width: 160rpx;height: 160rpx;"></image>
+    <image src="../../res/image-add-line.png" style="position: absolute;left: 360rpx;top:330rpx;width: 160rpx;height: 160rpx;"></image>
+    <image src="../../res/image-add-line.png" style="position: absolute;left: 530rpx;top:330rpx;width: 160rpx;height: 160rpx;"></image> -->
+      </scroll-view>
+
+      <view style="position: absolute;left: 20rpx;top: 482rpx;width: 130rpx;background-color: rgb(128, 165, 120);color: white;font-weight: 600;border-radius: 10rpx;text-align: center;height: 37rpx;font-size: 25rpx;padding-top: 4rpx;">📌标签({{tags.length}}):</view>
+      <scroll-view show-scrollbar="true" enhanced="true" scroll-x="true" style="position: absolute;left: 160rpx;top: 480rpx;width: 540rpx;color: white;font-weight: 600;border-radius: 10rpx;text-align: center;height: 47rpx;">
+        <view wx:if="{{tags.length!=0}}" style="position: absolute;display: flex;">
+          <view wx:for="{{tags}}" style="height:30rpx;border:4rpx rgb(128, 165, 120) solid;border-radius: 10rpx;text-align: center;color: black;width: {{item.length*22+27}}rpx;font-size: 22rpx;margin-top:2rpx;display: inline-block;padding-bottom: 5rpx;color: rgb(81, 110, 75);background-color: {{(selectedTag[item]?'#BBEEBB':'#FFFFFF')}};margin-right: 10rpx;" id="{{item}}" bindtap="selectTag">
+            {{(selectedTag[item]?'✔':'')}}{{item}}
+          </view>
+        </view>
+        <view wx:if="{{tags.length==0}}" style="height:34rpx;text-align: center;color: black;width: {{item.length*32}}rpx;font-size: 28rpx;top:0rpx;display: inline-block;padding-top: -2rpx;color: rgb(81, 110, 75);position: absolute;left: 20rpx;top: 2rpx;">暂无可用标签</view>
+
+      </scroll-view>
+      <view style="height:34rpx;text-align: center;color: black;width: {{item.length*32}}rpx;font-size: 23rpx;top:0rpx;padding-top: -2rpx;color: rgb(81, 110, 75);position: absolute;left: 20rpx;top: 528rpx;">❓{{tagtips}}</view>
+
+      <view id="user" style="position: absolute;left: 30rpx;top:570rpx;height: 60rpx;background-color: #b0a184;width: 330rpx;border-radius: 10rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);">
+        <text style="color: #EEEEEE;position: absolute;top: 5rpx;left: 10rpx;width: 400rpx;font-size: 38rpx;">#当前身份</text>
+        <image wx:if="{{user.accounts[user.current].qq!=''}}" src="http://q1.qlogo.cn/g?b=qq&nk={{user.accounts[user.current].qq}}&s=100" style="position: absolute;top: 6rpx;right: 20rpx;width: 50rpx;height: 50rpx;border-radius: 10rpx;"></image>
+      </view>
+      <view id="anonymous" style="position: absolute;left: 30rpx;top:640rpx;height: 60rpx;background-color: #b0a184;width: 330rpx;border-radius: 10rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);">
+        <text style="color: #EEEEEE;position: absolute;top: 5rpx;left: 10rpx;width: 400rpx;font-size: 38rpx;">#{{textfield}}</text>
+        <switch type="checkbox" checked="{{anonymous}}" bindchange="anonymousChange" style="position: absolute;right:15rpx;color: coral;top: 5rpx;width: 50rpx;height: 50rpx;" />
+      </view>
+
+      <view style="position: absolute;left: 30rpx;top: 710rpx;background-color: #807057;color: white;font-size: 28rpx;width: 420rpx;height: 50rpx;padding-left: 10rpx;padding-top: 10rpx;border-radius: 10rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);">#稿件经管理员审核后发表在空间</view>
+      <view style="position: absolute;left: 30rpx;top: 780rpx;background-color: #313732;color: white;font-size: 28rpx;width: 300rpx;height: 50rpx;padding-left: 10rpx;padding-top: 10rpx;border-radius: 10rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);">#请务必遵守<text style="position:absolute;color: rgb(255, 255, 255);background-color: rgb(108, 124, 153);border-radius: 10rpx;width: 130rpx;text-align: center;right: 10rpx;top: 12rpx;" bindtap="showRules">投稿规则</text></view>
+
+      <!-- <button id="postNow" style="position: absolute;top: 800rpx;left: 30rpx;width: 250rpx;padding: inherit;height: 60rpx;padding-top:5rpx;background-color: #8AA8B0;color: white;font-weight:lighter;font-size: 35rpx;border-radius: 10rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);" bindtap="postNow">投稿</button> -->
+
+      <button style="position: absolute;top: 860rpx;left: 30rpx;width: 250rpx;padding: inherit;height: 70rpx;font-weight:lighter;font-size: 35rpx;border-radius: 20rpx;box-shadow: 2px 2px 5px rgb(200, 200, 200);" bindtap="postNow">
+        <span class="text">投稿</span>
+        <span class="blob"></span>
+        <span class="blob"></span>
+        <span class="blob"></span>
+        <span class="blob"></span>
+      </button>
+
+      <view wx:if="{{false}}" style="position: absolute;top: 862rpx;left: 315rpx;width: 220rpx;padding: inherit;height: 54rpx;font-weight:lighter;font-size: 35rpx;border-radius: 20rpx;box-shadow: 4rpx 4rpx 9rpx #bf0fff55;border: 5rpx solid #bf0fff;font-size: 32rpx;font-weight: 500;color: #bf0fff;text-align: center;padding-top: 7rpx;">
+        文字预览
+      </view>
+    </scroll-view>
+  </view>
+
+  <view wx:if="{{pendingPost!=null}}" style="position: absolute;top: 40rpx;">
+    <view style="position: absolute;left: 35rpx;top: 15rpx;width: 680rpx;height: 45rpx;border-radius: 7px;background: #f0f0f0;box-shadow:  7rpx 7rpx 14rpx #c1c1c1,-7rpx -7rpx 14rpx #fbfbfb;font-size: 28rpx;text-align: center;font-weight: 600;color: rgb(131, 131, 131);">
+      🚧您当前有未审核稿件，请先取消或等待审核🚧
+    </view>
+    <view style="position: absolute;left: 35rpx;top: 90rpx;width: 680rpx;height: 370rpx;border-radius: 7px;background: #f0f0f0;box-shadow:  7rpx 7rpx 14rpx #c1c1c1,-7rpx -7rpx 14rpx #fbfbfb;">
+      <view style="position: absolute;left: 5rpx; top: 5rpx;font-size: 25rpx;background-color: #476C5E; color: white;width: 65rpx;height: 37rpx;padding-top: 5rpx;text-align: center;border-radius: 10rpx;">{{pendingPost.id}}</view>
+
+
+      <view style="position: absolute;left: 80rpx;top: 5rpx;background-color: cornflowerblue;color: white;width: 165rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">{{pendingPost.qq}}</view>
+
+      <view style="position: absolute;left: 260rpx;top: 5rpx;background-color: rgb(61, 190, 173);color: white;width: 195rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">{{pendingPost.time}}</view>
+
+
+      <view wx:if="{{pendingPost.anonymous}}" style="position: absolute;left: 465rpx;top: 5rpx;background-color: rgb(82, 90, 81);color: white;width: 90rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">匿名</view>
+      <view wx:if="{{!pendingPost.anonymous}}" style="position: absolute;left: 465rpx;top: 5rpx;background-color: rgb(105, 189, 94);color: rgb(255, 255, 255);width: 90rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">不匿名</view>
+
+      <view style="position: absolute;top: 55rpx;left:10rpx; font-size: 24rpx;width: 650rpx;" bindtap="showWholePendingText">{{pendingPost.subtext}}</view>
+
+      <!--图片-->
+      <view style="position: absolute;top: 210rpx;">
+
+        <view style="position: absolute;font-size: 23rpx;left: 10rpx;top:10rpx;background-color: #0b6d94;border-radius: 10rpx;width: 90rpx;color: white;height: 35rpx;text-align: center;padding-top: 5rpx;">{{pendingPost.media.length==0?"无图片":"图片("+pendingPost.media.length+")"}}</view>
+
+
+        <scroll-view scroll-x="true" style="position: absolute;width: 530rpx;height: 70rpx;top:0rpx;left: 110rpx;">
+          <!-- <view wx:for="{{item.media}}" wx:key="idx" style="position: absolute;left: {{index*140-2}}rpx;width: 124rpx;top: -2rpx;height: 74rpx;border-radius: 0rpx;background-color: black;" id="{{item}}"> </view> -->
+          <image wx:for="{{pendingPost.media}}" wx:key="idx" style="position: absolute;left: {{index*125}}rpx;width: 118rpx;top: 0rpx;height: 68rpx;border-radius: 0rpx;border:2rpx 2rpx solid #000" src="{{item}}" bindtap="showImage" id="{{item}}"> </image>
+        </scroll-view>
+      </view>
+
+
+      <view style="position: absolute;top: 310rpx;left: 155rpx;color: #ee733a;font-size: 25rpx;font-weight: 700;">🚮如果需要修改或撤回，请点击此按钮</view>
+      <view style="position:absolute;left:10rpx;top:303rpx;background-color: #eeeeee;color: #ee733a;width: 130rpx;text-align: center;height: 35rpx;font-size: 23rpx;padding-top: 7rpx;border-radius: 20rpx;border:4rpx solid #ee733a;font-weight: 700;" bindtap="cancelPendingPost">
+        取消发表
+      </view>
+
+    </view>
+  </view>
+</view>
+
+<view id="mePanel" wx:if="{{showMe}}">
+  <!-- 未绑定-->
+  <!-- <view wx:if="{{!bind}}">
+    <view style="position:absolute;left:15rpx;font-size: 14px;background-color: #EE4444;color: ivory;width: 700rpx;padding-left: 15rpx;height: 45rpx;padding-top: 5rpx;">*请先绑定用户</view>
+    <button style="position: absolute;top: 70rpx;background-color: #DDFFDD;left: 15rpx;width: 270rpx;" bindtap="bindNow">现在绑定</button>
+  </view> -->
+  <!--添加账号-->
+  <view id="account" bindtap="bindAccount" style="position: absolute;top: 60rpx;font-size: 30rpx;background-color: #ffffff;color:#2fd8d8;left: 30rpx;width: 190rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #2fd8d8;box-shadow: 2rpx 2rpx 5rpx #acffff;">🎫添加绑定</view>
+  <view style="position: absolute;top: 60rpx;font-size: 30rpx;background-color: #ffffff;color:#5fd82f;left: 240rpx;width: 120rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #5fd82f;box-shadow: 2rpx 2rpx 5rpx #bffaa8;" bindtap="refreshAccount">🔄刷新</view>
+  <view id="feedback" bindtap="feedback" style="position: absolute;top: 60rpx;font-size: 30rpx;background-color: #ffffff;color:#942fd8;left: 380rpx;width: 190rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #9a2fd8;box-shadow: 2rpx 2rpx 5rpx #dfa8ff;" bindtap="feedback">💬体验反馈</view>
+  <view style="position: absolute;top: 60rpx;font-size: 30rpx;background-color: #ffffff;color:#7c9e02;left: 590rpx;width: 120rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #c9cc08;box-shadow: 2rpx 2rpx 5rpx #daff54;" bindtap="navigateStatistics">📊统计</view>
+  <view style="position: absolute;top: 120rpx;font-size: 30rpx;background-color: #ffffff;color:#044499;left: 30rpx;width: 190rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #044499;box-shadow: 2rpx 2rpx 5rpx #75a6e6;" bindtap="navigateAccount">🔑账户设置</view>
+  <view style="position: absolute;top: 120rpx;font-size: 30rpx;background-color: #ffffff;color:#8d4f36;left: 240rpx;width: 190rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #b16b4f;box-shadow: 2rpx 2rpx 5rpx #ec9471;" bindtap="navigateAbout">🧱关于系统</view>
+
+  <view wx:if="{{isadmin}}" style="position: absolute;top: 180rpx;font-size: 30rpx;background-color: #ffffff;color:#ffc21a;left: 30rpx;width: 190rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #f1a500;box-shadow: 2rpx 2rpx 5rpx #ffc89b;" bindtap="navigateAdmin">🔐审核面板</view>
+  <view wx:if="{{isadmin}}" style="position: absolute;top: 180rpx;font-size: 30rpx;background-color: #ffffff;color:#808080;left: 240rpx;width: 190rpx;height:45rpx;text-align: center;padding-top: 5rpx;border-radius: 15rpx;border:4rpx solid #9e9e9e;box-shadow: 2rpx 2rpx 5rpx #c0c0c0;" bindtap="navigateLog">📃日志面板</view>
+
+
+  <scroll-view style="position: absolute;left: 30rpx;top: {{isadmin?260:190}}rpx;width: 720rpx;height: {{windowHeightRpx-115-(isadmin?260:190)}}rpx;" scroll-y="true">
+    <!-- <view id="userCardsBG" wx:if="{{user.accounts.length>0}}" wx:for="{{user.accounts}}" style="position: absolute;width: 694rpx;height: 154rpx;left: 0rpx;top: {{index*180}}rpx;background-color: #c4c4c45e;border-radius: 20rpx;" ></view> -->
+    <!-- <view id="userCards" wx:if="{{user.accounts.length>0}}" wx:for="{{user.accounts}}" style="position: absolute;width: 690rpx;height: 150rpx;left: 0rpx;top: {{index*180}}rpx;background-color: #e2e2e25d;border-radius: 20rpx;box-shadow: 2px 2px 4px rgb(202, 202, 202);"> -->
+    <view id="userCards" wx:if="{{user.accounts.length>0}}" wx:for="{{user.accounts}}" style="position: relative;margin-bottom:30rpx;width: 690rpx;height: 150rpx;left: 0rpx;border-radius: 7px;background: linear-gradient(145deg, #eeeeee, #d1d0d0);box-shadow:  6rpx 6rpx 10rpx #b9b9b9,-16rpx -16rpx 33rpx #fbfbfb;">
+      <view id="avatar">
+        <image wx:if="{{user.accounts[index].qq!=''}}" src="http://q1.qlogo.cn/g?b=qq&nk={{user.accounts[index].qq}}&s=100" style="position: absolute;top: 30rpx;;left: 50rpx;width:90rpx;height:90rpx;border-radius: 60rpx;"></image>
+      </view>
+      <view>
+        <text style="position: absolute;font-size: 40rpx; left: 190rpx;top: 20rpx;color: black;width: 700rpx;height: 50rpx;">{{user.accounts[index].nick}}</text>
+      </view>
+      <view>
+        <text style="position: absolute;font-size: 32rpx; left: 185rpx;top: 80rpx;color: rgb(255, 255, 255);width:220rpx;height: 45rpx;background-color: #b9c76b;text-align: center;border-radius: 10rpx;">{{user.accounts[index].qq}}</text>
+      </view>
+
+      <!--选中-->
+      <view wx:if="{{user.current==index}}" style="position: absolute;font-size: 30rpx;right: 65rpx;top: 50rpx;color: #6cbe00;">
+        已选择
+      </view>
+      <button wx:if="{{user.current!=index}}" style="position: absolute;width: 120rpx;height: 60rpx;font-weight: normal;font-size: 30rpx;padding: inherit;background-color: #9aa55e;color: white;padding-top: 7rpx;right: 50rpx;top: 50rpx;border-radius: 20rpx;" bindtap="selectAccount" id="{{index}}">
+        选择
+      </button>
+    </view>
+    <view style="height: 20rpx;"></view>
+  </scroll-view>
+</view>
+
+<view id="servicePanel" wx:if="{{showService}}">
+  <scroll-view style="position:absolute;left:0rpx;width: 750rpx;height: {{windowHeightRpx-115}}rpx;top:50rpx" wx:if="{{serviceList.length!=0}}" scroll-y="true">
+    <view wx:for="{{serviceList}}" wx:key="id" id="{{index}}" style="position: absolute;left: 40rpx;width: 670rpx;height: 120rpx;top:{{index*145+10}}rpx;background-color: {{item.color}};border-radius: 12rpx;box-shadow: 5rpx 5rpx 10rpx #CCCCCC;" bindtap="useService">
+      <view style="position:absolute;color: white;left: 28rpx;top: 17rpx;font-size: 40rpx;font-weight: 800;">
+        {{item.name}}
+      </view>
+
+      <view style="position: absolute;background-color: rgb(108, 124, 153);left: 0rpx;bottom: 0rpx;width: 70rpx;height: 37rpx;border-radius: 0rpx 0rpx 0rpx 12rpx;color: white;font-size: 30rpx;text-align: center;">
+        #{{item.id}}
+      </view>
+
+      <view style="position: absolute;left: 78rpx;top: 80rpx;font-size: 28rpx;color: rgb(255, 255, 255);font-weight: 400;">
+        {{item.description}}
+      </view>
+
+      <view style="color: rgb(248, 248, 248);position: absolute;top: 30rpx;font-size:23rpx;right: 25rpx;border-radius: 10rpx;padding-left: 5rpx;padding-right: 5rpx;border:4rpx solid #eeeeee;font-weight: 600;">
+        点击进入
+      </view>
+    </view>
+  </scroll-view>
+  <view wx:if="{{serviceList.length==0}}" style="position: absolute;top: 25%;">
+    <view style="position: absolute;top: 0rpx;left: 0rpx;font-size: 100rpx;width: 750rpx;text-align: center;">
+      🚧
+    </view>
+    <view style="position: absolute;top: 160rpx;color: rgb(255, 160, 52);width: 750rpx;text-align: center;font-size: 30rpx;font-weight: 800;">
+      即将上线,敬请期待。
+    </view>
+  </view>
+</view>
+
+<!--三个:110 350 586-->
+<!--两个:200 490-->
+<block>
+  <!-- <view id="tabBar" style="display: flex;position: absolute;bottom: 0rpx;left:-2rpx;height:57px;width: 754rpx;background-color: #e6e6e685;border-radius: 30rpx;"> -->
+  <!-- </view> -->
+  <view id="tabBar" style="z-index:100;display: flex;position: absolute;bottom: 10rpx;height:105rpx;width: 740rpx;left:5rpx;background-color: rgb(255, 255, 255);border-radius: 30rpx;box-shadow: 2px 2px 10px #c4c4c4;">
+    <!-- <view id="trends" style="display:block;position: absolute;left: 110rpx;" bindtap="switchTrend">
+      <image src="../../res/chat-smile-2-line.png" style="position:absolute;width: 60rpx;height: 60rpx;left:0rpx;top: 6px;"></image>
+      <text style="position: absolute;font-size: 12px;width: 120rpx;left: 5rpx;top: 70rpx;color: coral;font-style:inherit;">动态</text>
+    </view> -->
+    <view id="post" style="display:block;position: absolute;left: 115rpx;top: -4rpx;" bindtap="switchPost">
+      <!-- <image src="../../res/edit-box-line.png" style="position:absolute;width: 60rpx;height: 60rpx;left: 0rpx;top: 6px;"></image> -->
+      <text style="position:absolute;width: 60rpx;height: 60rpx;left: 0rpx;top: 6px;font-size: 45rpx;text-align: center;">📬</text>
+      <text style="position: absolute;font-size: 23rpx;width: 120rpx;left: 9rpx;top: 70rpx;color: coral;font-style:inherit;">投稿</text>
+      <view wx:if="{{showPost}}" style="position: absolute;background-color: rgb(255, 135, 80);left: -6rpx;top: 104rpx;width: 72rpx;height: 7rpx;"></view>
+    </view>
+    <view id="me" style="display:block;position: absolute;left: 345rpx;top: -4rpx;" bindtap="switchMe">
+      <!-- <image src="../../res/user-4-line.png" style="position:absolute;width: 60rpx;height: 60rpx;left: 0rpx;top: 6px;"></image> -->
+      <text style="position:absolute;width: 60rpx;height: 60rpx;left: 0rpx;top: 6px;font-size: 45rpx;text-align: center;">📟</text>
+      <text style="position: absolute;font-size: 23rpx;width: 120rpx;left: 10rpx;top: 70rpx;color: coral;font-style:inherit;">我的</text>
+      <view wx:if="{{showMe}}" style="position: absolute;background-color: rgb(255, 135, 80);left: -4rpx;top: 104rpx;width: 72rpx;height: 7rpx;"></view>
+    </view>
+    <view id="service" style="display:block;position: absolute;left:570rpx;top: -4rpx;" bindtap="switchService">
+      <!-- <image src="../../res/user-4-line.png" style="position:absolute;width: 60rpx;height: 60rpx;left: 0rpx;top: 6px;"></image> -->
+      <text style="position:absolute;width: 60rpx;height: 60rpx;left: 0rpx;top: 6px;font-size: 45rpx;text-align: center;">🏢</text>
+      <text style="position: absolute;font-size: 23rpx;width: 120rpx;left: 10rpx;top: 70rpx;color: coral;font-style:inherit;">服务</text>
+      <view wx:if="{{showService}}" style="position: absolute;background-color: rgb(255, 135, 80);left: -4rpx;top: 104rpx;width: 72rpx;height: 7rpx;"></view>
+    </view>
+  </view>
+</block>
+
+
+<view id="feedback" wx:if="{{showFeedback}}" style="z-index:5;position: absolute;width: 750rpx;height: {{windowHeight}}px;background: rgba(128, 128, 128, 0.39);">
+  <view id="panel" style="position: absolute;width: 520rpx;height: 420rpx;left: 115rpx;top: 20%;background-color: rgb(255, 255, 255);border-radius: 20rpx;opacity: 98%;background: linear-gradient(145deg, #e6e6e6, #ffffff);box-shadow:  12rpx 12rpx 28rpx #8a8a8a;padding:10rpx;">
+    <view style="position: absolute;left: 0rpx;top: 0rpx;width: 520rpx;height: 65rpx;font-size: 30rpx;color: rgb(42, 133, 0);border-radius: 20rpx 20rpx 0rpx 0rpx;">
+      <view style="left: 30rpx;font-size: 32rpx;top: 15rpx;position: absolute;font-weight: 1000;">💬 体验反馈</view>
+    </view>
+
+    <textarea style="position:absolute;top: 90rpx;left: 35rpx;font-size: 27rpx;width: 88%;border-radius: 7px;border-radius: 7px;height: 260rpx;" placeholder='每个观点都有意义...' maxlength="40960" bindinput="feedbackInput" value="{{feedbackvalue}}"></textarea>
+
+    <view id="submit" style="position: absolute;right: 40rpx;width: 110rpx;height: 45rpx;bottom: 25rpx;background-color: rgb(107, 214, 1);text-align: center;border-radius: 15rpx;color: white;border-radius: 7px;background: linear-gradient(145deg, #21c500, #1ca600);box-shadow:  4rpx 4rpx 8rpx #dadada;align-items: center;" bindtap="submitFeedback">提交</view>
+  </view>
+  <image src="../../res/close-circle-fill.png" style="position: absolute;left:625rpx;width: 55rpx;height: 55rpx;top: 18%;background-color: white;border-radius: 50rpx;" bindtap="closeFeedback"></image>
+</view>
+<!--preview-->
+<view wx:if="{{showPreview}}">
+
+</view>
+
+<!--banned-->
+<view wx:if="{{user.isbanned}}" style="position: absolute;z-index: 9999999;background-color: white;width: 100%;height: 100%;left: 0%;right: 0%;">
+  <view style="position: absolute;width: 500rpx;height: 40rpx;left: 125rpx;top:170rpx;text-align: center;font-size: 60rpx;font-weight: 800;color: rgb(105, 46, 6);">您已被封禁</view>
+  <view style="position: absolute;width: 750rpx;height: 40rpx;left: 0rpx;top:260rpx;text-align: center;font-size: 25rpx;font-weight: 800;color: rgb(105, 46, 6);">由于您的行为违反规则，账户已被封禁</view>
+  <view style="position: absolute;width: 300rpx;height: 40rpx;left: 225rpx;bottom:410rpx;text-align: center;font-size: 40rpx;font-weight: 800;color: rgb(105, 46, 6);">原因</view>
+  <view style="position: absolute;width: 480rpx;height: 40rpx;left: 135rpx;bottom:360rpx;text-align: center;font-size: 27rpx;font-weight: 800;color: rgb(105, 46, 6);">[ {{user.reason}} ]</view>
+  <view style="position: absolute;width: 300rpx;height: 40rpx;left: 225rpx;bottom:260rpx;text-align: center;font-size: 40rpx;font-weight: 800;color: rgb(105, 46, 6);">解禁</view>
+  <view style="position: absolute;width: 480rpx;height: 40rpx;left: 135rpx;bottom:210rpx;text-align: center;font-size: 27rpx;font-weight: 800;color: rgb(105, 46, 6);">[ {{user.expireText}} ]</view>
+</view>

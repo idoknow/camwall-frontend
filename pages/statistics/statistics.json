@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "ec-canvas":"../../echarts-for-weixin/ec-canvas/ec-canvas"
+  },
+  "navigationBarTitleText":"统计数据",
+  "navigationBarBackgroundColor":"#aacc44",
+  "navigationBarTextStyle":"white",
+  "backgroundColor": "#dddddd"
+}

@@ -1,0 +1,52 @@
+<!--pages/admin/admin.wxml-->
+<!-- <text>pages/admin/admin.wxml</text> -->
+<view id="filter" style="position: absolute;width: 700rpx;height: 100rpx;left:25rpx;top:20rpx;border-radius: 20rpx;">
+  <text style="position: absolute;left: 20rpx;top: 20rpx;font-size: 30rpx;padding-top: 8rpx;">筛选状态:</text>
+  <picker mode="selector" range="{{status}}" value="{{status_value}}" style="position:absolute;left: 160rpx;top:20rpx;background-color: {{status_color[status[status_value]]}};color: white;width: 150rpx;text-align: center;height: 50rpx;font-size: 30rpx;padding-top: 8rpx;border-radius: 20rpx;box-shadow: 4rpx 4rpx 6rpx #8b8b8baf;" bindchange="selectStatus">{{status[status_value]}}</picker>
+</view>
+
+<view style="position: absolute;left: 45rpx;top: 125rpx;font-size: 30rpx;padding-top: 8rpx;">翻页:</view>
+<scroll-view wx:if="{{posts.page_list.length>0}}" id="pages" scroll-x="true" style="position: absolute;width: 620rpx;height: 70rpx;left: 125rpx;top: 120rpx;">
+  <view id="{{item}}" bindtap="switchPage" wx:for="{{posts.page_list}}" style="position: absolute;left: {{index*70}}rpx;background-color: {{(posts.page==item)?'#083643':'#FFFFFF'}};width: 60rpx;border-radius:30rpx;height: 55rpx;text-align:center;font-size: 35rpx;padding-top: 8rpx;color: {{(posts.page!=item)?'#083643':'#FFFFFF'}};">
+    {{item}}
+  </view>
+</scroll-view>
+
+<scroll-view scroll-y="true" wx:if="{{posts.posts.length!=0}}" style="position: absolute;bottom: 20rpx; left: 40rpx;width: 700rpx;height: {{windowHeight-130}}px;">
+  <view wx:for="{{posts.posts}}" style="position: absolute;left: 0rpx;top: {{index*200}}rpx;width: 680rpx;height: 180rpx;border-radius: 7px;background: #dedede;box-shadow:  7rpx 7rpx 14rpx #c1c1c1,-7rpx -7rpx 14rpx #fbfbfb;">
+    <view style="position: absolute;left: 5rpx; top: 5rpx;font-size: 25rpx;background-color: #476C5E; color: white;width: 65rpx;height: 37rpx;padding-top: 5rpx;text-align: center;border-radius: 10rpx;" id="{{item.id}}">{{item.id}}</view>
+    <view style="position: absolute;left: 80rpx;top: 5rpx;background-color: cornflowerblue;color: white;width: 165rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">{{item.qq}}</view>
+    <view style="position: absolute;left: 260rpx;top: 5rpx;background-color: rgb(61, 190, 173);color: white;width: 195rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">{{item.time}}</view>
+    <view wx:if="{{item.anonymous}}" style="position: absolute;left: 465rpx;top: 5rpx;background-color: rgb(100, 100, 100);color: white;width: 60rpx;height: 37rpx;font-size: 25rpx;padding-top:5rpx;border-radius: 10rpx;text-align: center;">匿名</view>
+
+    <view style="position: absolute;top: 55rpx;left:10rpx; font-size: 24rpx;" id="{{index}}" bindtap="showWholeText">{{item.subtext}}</view>
+    <picker range="{{post_status}}" style="position:absolute;right: 20rpx;top:8rpx;background-color: {{status_color[item.status]}};color: white;width: 110rpx;text-align: center;height: 40rpx;font-size: 25rpx;padding-top: 8rpx;border-radius: 20rpx;" bindchange="updatePostStatus" id="{{index}}">{{item.status}}</picker>
+    <view style="position: absolute;font-size: 23rpx;left: 10rpx;top: 100rpx;background-color: #476C5E;border-radius: 10rpx;width: 90rpx;color: white;height: 35rpx;text-align: center;padding-top: 5rpx;" id="{{index}}" bindtap="showThumb">{{item.media.length==0?"无图片":"图片("+item.media.length+")"}}</view>
+    <scroll-view wx:if="{{item.showthumb}}" scroll-x="true" style="position: absolute;width: 550rpx;height: 70rpx;right: 15rpx;bottom: 15rpx;">
+      <!-- <view wx:for="{{item.media}}" wx:key="idx" style="position: absolute;left: {{index*140-2}}rpx;width: 124rpx;top: -2rpx;height: 74rpx;border-radius: 0rpx;background-color: black;" id="{{item}}"> </view> -->
+      <image wx:for="{{item.media}}" wx:key="idx" style="position: absolute;left: {{index*140}}rpx;width: 118rpx;top: 0rpx;height: 68rpx;border-radius: 0rpx;border:2rpx 2rpx solid #000" src="{{item}}" bindtap="showImage" id="{{item}}"> </image>
+    </scroll-view>
+  </view>
+</scroll-view>
+
+<text wx:if="{{posts.posts.length==0}}" style="position: absolute;width: 650rpx;left: 50rpx;top: 200rpx;background-color: #ff2222;color: white;padding-left: 10rpx;height: 45rpx;font-size: 30rpx;padding-top: 8rpx;">无数据!</text>
+
+<view wx:if="{{loading}}" style="position: absolute;width: 650rpx;left: 50rpx;top: 200rpx;background-color: #ffd035;color: white;padding-left: 10rpx;height: 45rpx;font-size: 30rpx;padding-top: 8rpx;">{{loadingTips}}</view>
+
+
+<view wx:if="{{showReview}}" id="review" style="position: absolute;left: 0rpx;top: 0rpx;width: 100%;height: 100%;background-color: #44444488;">
+  <view id="panel" style="position: absolute;width: 500rpx;height: 300rpx;left: 125rpx;top: 20%;border-radius: 15px;background: #e6e6e6;box-shadow:  14rpx 14rpx 28rpx #858585;">
+    <view style="position:absolute;left: 0rpx;top: 0rpx;width: 420rpx;height: 45rpx;color: rgb(212, 0, 0);font-weight: 800;padding-left: 20rpx;padding-top: 10rpx;">
+      ❗拒绝发表
+    </view>
+    <textarea placeholder="输入拒绝理由..." style="position: absolute;width: 450rpx;left: 25rpx;top: 60rpx;height:160rpx;font-size: 28rpx;" bindinput="reviewInput">
+    </textarea>
+    <view style="font-size: 24rpx;position: absolute;left: 220rpx;bottom: 18rpx;color: #ffffff;border:4rpx solid #636363;border-radius: 10rpx;text-align: center;width: 140rpx;height: 33rpx;background-color: #636363;" bindtap="denyWithoutReview">
+      无理由拒绝
+    </view>
+    <view id="submit" style="position: absolute;width: 100rpx;height: 45rpx;background-color: #DD4444;color: white;right: 15rpx;bottom: 15rpx;border-radius: 15rpx;" bindtap="submitReview">
+      <text style="position: absolute;width: 100rpx;height: 45rpx;color: white;text-align: center;left: 0rpx;">提交</text>
+    </view>
+  </view>
+  <image src="../../res/close-circle-fill.png" style="position: absolute;left:600rpx;width: 55rpx;height: 55rpx;top: 18%;background-color: white;border-radius: 50rpx;" bindtap="closeReview"></image>
+</view>
