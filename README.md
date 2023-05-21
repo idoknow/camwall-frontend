@@ -1,7 +1,9 @@
 # Frontend
 
 使用微信小程序栈开发的运营平台前端，用户界面与管理员界面都在这里。  
-配合[后端](https://github.com/CamBoard/OpenCamwall)使用。
+配合[后端](https://github.com/CamBoard/OpenCamwall)使用。  
+
+- 欲粗略了解此系统功能及使用流程，请加群查看PPT: 226427026
 
 ## 部署
 
